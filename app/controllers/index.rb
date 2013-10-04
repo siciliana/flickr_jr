@@ -1,17 +1,28 @@
+
+require 'haml'
+
 get '/' do
   erb :index
 end
 
-get '/logout' do 
-  session.clear
-  redirect '/'
-end
+# get '/logout' do 
+#   session.clear
+#   redirect '/'
+# end
 
-get '/profile/:id' do
-  @user = User.find(params[:id])
-  @user_albums = @user.albums
-  erb :user_profile
-end
+# get '/profile/:id' do
+#   @user = User.find(params[:id])
+#   @user_albums = @user.albums
+#   erb :user_profile
+# end
+
+get "/upload" do
+  File.open('uploads/' + params['myfile'][:filename], "w") do |f|
+    f.write(params['myfile'][:tempfile].read)
+  end
+  return "The file was successfully uploaded"
+  haml :upload
+end 
 
 #========== POST ===============
 
@@ -21,33 +32,42 @@ post '/albums/:id' do
   photo.save
 end 
 
-post '/login' do 
-  @user = User.find_by_username(params[:username])
-  if @user 
-    if @user.password == params[:password]
-      session[:id] = @user.id
-      erb :index
-    else  
-      @notpass = 'Either your usernamd or password is wrong' 
-      redirect '/'
-    end 
-  else
-    @notpass = 'Either your usernamd or password is wrong'
-    erb :index
-  end 
+# post '/login' do 
+#   @user = User.find_by_username(params[:username])
+#   if @user 
+#     if @user.password == params[:password]
+#       session[:id] = @user.id
+#       erb :index
+#     else  
+#       @notpass = 'Either your usernamd or password is wrong' 
+#       redirect '/'
+#     end 
+#   else
+#     @notpass = 'Either your usernamd or password is wrong'
+#     erb :index
+#   end 
+# end
+
+# post '/signup' do
+#   if params[:password] == params[:confirm_password]
+#     @new_user = User.create(username: params[:username], password: params[:password])
+#     session[:id] = @new_user.id
+#     erb :index 
+#   else 
+#     @mismatch = "password and confirm password do not match"
+#     erb :index
+#   end 
+  
+# end 
+
+post "/upload" do 
+  File.open('uploads/' + params['myfile'][:filename], "w") do |f|
+    f.write(params['myfile'][:tempfile].read)
+  end
+  return "Your secret has been rendered to the interwebs!"
 end
 
-post '/signup' do
-  if params[:password] == params[:confirm_password]
-    @new_user = User.create(username: params[:username], password: params[:password])
-    session[:id] = @new_user.id
-    erb :index 
-  else 
-    @mismatch = "password and confirm password do not match"
-    erb :index
-  end 
-  
-end 
+
 
 
 # get '/profile/:id' do

@@ -23,6 +23,8 @@ require 'erb'
 require 'carrierwave'
 require 'carrierwave/orm/activerecord'
 require 'mini_magick'
+require 'haml'
+
 
 # Some helper constants for path-centric logic
 APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))
@@ -37,6 +39,7 @@ Dir[APP_ROOT.join('app', 'helpers', '*.rb')].each { |file| require file }
 require APP_ROOT.join('config', 'database')
 
 Dir[APP_ROOT.join('app', 'uploaders', '*.rb')].each { |file| require file }
+
 CarrierWave.configure do |config|
   config.root = APP_ROOT + 'public/'
 end 
