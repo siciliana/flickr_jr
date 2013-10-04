@@ -1,28 +1,33 @@
-
 require 'haml'
 
+
 get '/' do
+  @photos = Photo.all
+  @user_albums = Album.all 
+  
   erb :index
 end
 
-# get '/logout' do 
-#   session.clear
-#   redirect '/'
-# end
-
-# get '/profile/:id' do
-#   @user = User.find(params[:id])
-#   @user_albums = @user.albums
-#   erb :user_profile
-# end
-
 get "/upload" do
-  File.open('uploads/' + params['myfile'][:filename], "w") do |f|
-    f.write(params['myfile'][:tempfile].read)
-  end
-  return "The file was successfully uploaded"
   haml :upload
 end 
+
+get '/logout' do 
+  session.clear
+  redirect '/'
+end
+
+get '/profile/:id' do
+  @user = User.find(params[:id])
+  @user_albums = @user.albums
+  erb :user_profile
+end
+
+
+get '/albums' do
+  @albums = current_user.albums
+  erb :show_albums
+end
 
 #========== POST ===============
 
@@ -31,6 +36,14 @@ post '/albums/:id' do
   photo.file = params[:image]
   photo.save
 end 
+
+post "/upload" do 
+  File.open('uploads/' + params['myfile'][:filename], "w") do |f|
+    f.write(params['myfile'][:tempfile].read)
+  end
+  return "Your secret has been rendered to the interwebs!"
+end
+
 
 # post '/login' do 
 #   @user = User.find_by_username(params[:username])
@@ -59,13 +72,6 @@ end
 #   end 
   
 # end 
-
-post "/upload" do 
-  File.open('uploads/' + params['myfile'][:filename], "w") do |f|
-    f.write(params['myfile'][:tempfile].read)
-  end
-  return "Your secret has been rendered to the interwebs!"
-end
 
 
 
